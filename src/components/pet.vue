@@ -4,10 +4,19 @@ const props = defineProps({
   id: { type: String, required: true }, // WIP / TODO used for querying the rest of the details from a TBD server
 
   // stuff to be replaced by a database
-  images: { type: Array, default: () => [] },
-  features: { type: Array, default: () => ['N/A'] },
-  descriptors: { type: Array, default: () => ['N/A'] },
+//   images: { type: Array, default: () => [] },
+//   features: { type: Array, default: () => ['N/A'] },
+//   descriptors: { type: Array, default: () => ['N/A'] },
 })
+
+// grab specific pet
+const response = fetch(`/api/pets/${props.name}`)
+
+if (!response) {
+  console.error(`Failed to fetch pet: ${props.name}`)
+}
+
+const petData = await response.json()
 </script>
 
 <template>
