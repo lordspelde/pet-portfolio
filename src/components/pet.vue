@@ -17,6 +17,10 @@ if (!response) {
 }
 
 const petData = await response.json()
+
+const images = petData.images || []
+const features = petData.features || 'N/A'
+const descriptors = petData.descriptors || 'N/A'
 </script>
 
 <template>
@@ -31,9 +35,9 @@ const petData = await response.json()
 
           <v-card-text>
             <h4>About me</h4>
-            <p class="text-body-1" v-for="desc in descriptors">{{ desc }}</p>
+            <p class="text-body-1">{{ descriptors }}</p>
             <h4>Features</h4>
-            <p class="text-body-1" v-for="feature in features">{{ feature }}</p>
+            <p class="text-body-1">{{ features }}</p>
           </v-card-text>
 
           <v-card-actions>
