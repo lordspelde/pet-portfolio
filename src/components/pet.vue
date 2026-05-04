@@ -11,7 +11,7 @@ const props = defineProps({
 //   descriptors: { type: Array, default: () => ['N/A'] },
 })
 
-const URL = 'http://localhost:3000' // /api
+const URL = "/api"
 
 const gridVisible = ref(false)
 const uploadVisible = ref(false)
