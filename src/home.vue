@@ -1,51 +1,55 @@
 <script setup>
+import { onMounted, ref } from 'vue';
 
+const URL = 'http://localhost:3000' // /api
+
+const loading = ref(true)
+const pets = ref({})
+
+onMounted(async () => {
+  try {
+    // grab all pets
+    const response = await fetch(`${URL}/pets`)
+
+    if (!response.ok) {
+      console.error(`Failed to fetch pets`)
+    }
+
+    const petData = await response.json()
+    
+    for (const pet of petData) {
+      pets.value[pet.id] = pet
+    }
+  } catch (error) {
+    console.error(`Error fetching pet data`, error)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <template>
-    <div class="d-flex align-center justify-center mt-8" style="gap: 2rem;">
+    <div class="d-flex align-center justify-center mt-8">
         <div class="text-block" style="max-width: 320px;">
             <h2 class="mb-2">Pet Portfolio</h2>
             <p class="mb-4">
-                There's not much here yet, but in the future there will be more!
+                Welcome to the Pet Portfolio. Here you can find some information about my pets as well as plenty of pictures.
             </p>
-            <p>
-                Until then, I've filled the space with this AI-generated cat image carousel to meet the requirements :)
-            </p>
-        </div>
-        
-        <div class="carousel-wrapper">
-            <v-carousel crossfade="true" cycle="true" hide-delimiters="true" height="500">
-                <v-carousel-item src="ai-cat-1.png" cover></v-carousel-item>
-                <v-carousel-item src="ai-cat-2.png" cover></v-carousel-item>
-                <v-carousel-item src="ai-cat-3.png" cover></v-carousel-item>
-            </v-carousel>
-            <div class="carousel-fade"></div>
         </div>
     </div>
+
+    <v-container v-if="!loading" class="mt-8">
+        <v-row>
+            <v-col v-for="pet in pets" :key="pet.id" cols="12" sm="6" md="4" lg="3">
+                <v-card :href="'#/' + pet.name.toLowerCase()" class="rounded-xl overflow-hidden">
+                    <v-card-title class="text-h5">{{ pet.name }}</v-card-title>
+                    <v-img :src="pet.photos[0]" height="400px"></v-img>
+                </v-card>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <style scoped>
-.carousel-wrapper {
-    position: relative;
-    width: 600px;
-}
 
-.v-carousel {
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-}
-
-.carousel-fade {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 80px;
-    pointer-events: none;
-    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, var(--fade-bg, #fff) 100%);
-    border-bottom-left-radius: 18px;
-    border-bottom-right-radius: 18px;
-}
 </style>
