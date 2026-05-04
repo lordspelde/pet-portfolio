@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
-const URL = 'http://localhost:3000' // /api
+const URL = '/api'
 
 const loading = ref(true)
 const pets = ref({})
