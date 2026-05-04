@@ -11,8 +11,12 @@ const props = defineProps({
 //   descriptors: { type: Array, default: () => ['N/A'] },
 })
 
+const URL = 'http://localhost:3000' // /api
+
 const gridVisible = ref(false)
 const uploadVisible = ref(false)
+const uploadLoading = ref(false)
+const photoURL = ref('')
 
 const images = ref([])
 const features = ref('N/A')
@@ -27,10 +31,39 @@ function toggleUpload() {
   uploadVisible.value = !uploadVisible.value
 }
 
+async function submitURL() {
+  if (!photoURL.value) return
+
+  uploadLoading.value = true
+
+  try {
+    const response = await fetch(`${URL}/pets/${props.id}/photos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        url: photoURL.value 
+      }),
+    })
+
+    if (response.ok) {
+      // push new photo to images
+      images.value.push(photoURL.value)
+
+      // reset
+      photoURL.value = ""
+      uploadVisible.value = false
+    }
+  } catch (error) {
+    console.log("Could not upload photo", error)
+  } finally {
+    uploadLoading.value = false
+  }
+}
+
 onMounted(async () => {
   try {
     // grab specific pet
-    const response = await fetch(`http://localhost:3000/pets/${props.id}`)
+    const response = await fetch(`${URL}/pets/${props.id}`)
 
     if (!response.ok) {
       console.error(`Failed to fetch pet: ${props.name}`)
@@ -123,7 +156,29 @@ onMounted(async () => {
       <v-card-title>Upload Photo</v-card-title>
       <v-card-text>
         <p>Upload additional photos of {{ name }}</p>
+
+        <v-text-field
+          v-model="photoURL"
+          label="Link to image"
+          placeholder="https://example.com/pet.jpg"
+          prepend-inner-icon="mdi-link"
+          hint="Accepts most standard image formats (.jpeg .jpg .png .webp)"
+        />
       </v-card-text>
+
+      <v-card-actions>
+        <v-spacer/>
+
+        <v-btn
+          color="primary" 
+          :loading="uploadLoading"
+          :disabled="!photoURL"
+          @click="submitURL"
+        >
+          Upload
+        </v-btn>
+        <v-btn @click="uploadVisible = false">Cancel</v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 
