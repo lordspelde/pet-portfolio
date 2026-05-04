@@ -46,6 +46,6 @@ const currentView = computed(() => {
         <v-main>
             <component :is="currentView"></component>
         </v-main>
-        <v-footer app="true">Copyright 2026</v-footer>
+        <v-footer app=true>Copyright 2026</v-footer>
     </v-app>
 </template>
